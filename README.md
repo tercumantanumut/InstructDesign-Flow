@@ -17,8 +17,7 @@ InstructDesign Flow is a specialized fine-tuning of FLUX.1 Kontext [dev] that un
 - **100+ Pre-defined Design Presets**: From dark mode to cyberpunk themes
 - **Natural Language Control**: Describe changes in plain English
 - **Consistent Transformations**: 85%+ instruction adherence rate
-- **Production Ready**: Dockerized with automatic model downloads
-- **Real-time API**: WebSocket support for live progress updates
+- **End-to-End Pipeline Development for Production**: Dockerized with automatic model downloads
 
 ## 📊 Dataset & Training
 
