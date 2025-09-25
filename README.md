@@ -161,7 +161,7 @@ InstructDesign-Flow/
 ├── workflow_api.json         # ComfyUI workflow definition
 ├── inputs/                   # Input images directory
 ├── output/                   # Generated outputs
-├── deeployd-comfy/          # API wrapper implementation
+├── deeployd-comfy/          # DeepFloyd-Comfy API wrapper (my own deployment framework)
 ├── comfyui-deploy-next-example/ # Frontend application
 └── training/
     └── config.yaml          # Training configuration
@@ -259,7 +259,8 @@ ls output/flux_kontext_lora_v4_consolidated/samples/
 - **Dataset Samples**: [HuggingFace Datasets](https://huggingface.co/datasets/tercumantanumut/instructdesign-kontext)
 - **Training Framework**: [AI Toolkit by Ostris](https://github.com/ostris/ai-toolkit)
 - **Base Model**: [FLUX.1 Kontext [dev]](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev)
-- **API Framework**: [DeepFloyd-Comfy](https://github.com/deepfloyd/deepfloyd-comfy)
+- **API Framework**: [DeepFloyd-Comfy](https://github.com/flowers6421/deeployd-comfy) (My ComfyUI deployment solution)
+- **Frontend Foundation**: [ComfyUI Deploy Next.js Example](https://github.com/BennyKok/comfyui-deploy-next-example)
 
 ## 🏆 Hackathon Submission
 
@@ -287,11 +288,24 @@ This project uses the FLUX.1 Kontext [dev] model. Please refer to:
 
 ## 🙏 Acknowledgments
 
-- **Black Forest Labs** for FLUX.1 Kontext [dev]
-- **Ostris** for the excellent AI Toolkit training framework
-- **ComfyUI** community for the inference infrastructure
-- **HuggingFace** for model and dataset hosting
-- **DeepFloyd** team for the API wrapper framework
+### Core Technologies
+- **[Black Forest Labs](https://blackforestlabs.ai/)** for FLUX.1 Kontext [dev] model
+- **[Ostris](https://github.com/ostris)** for the excellent [AI Toolkit](https://github.com/ostris/ai-toolkit) training framework
+- **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)** community for the powerful inference infrastructure
+- **[ComfyDeploy](https://github.com/BennyKok/comfyui-deploy-next-example)** for the Next.js frontend example that served as the foundation for our UI
+
+### Hackathon Sponsors
+- **[fal.ai](https://fal.ai/)** - Hackathon co-sponsor and compute infrastructure
+- **[Black Forest Labs](https://blackforestlabs.ai/)** - Model provider and hackathon host
+- **[Comfy.org](https://comfy.org/)** - Hackathon partner and ecosystem support
+
+### Infrastructure & Tools
+- **[HuggingFace](https://huggingface.co/)** for model and dataset hosting
+- **[DeepFloyd-Comfy](https://github.com/flowers6421/deeployd-comfy)** - My own ComfyUI deployment application used for the API wrapper
+
+### Special Thanks
+- The entire FLUX.1 and ComfyUI community for their support and feedback
+- All hackathon participants for pushing the boundaries of AI-driven design
 
 ## 🚧 Roadmap
 
