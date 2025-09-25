@@ -56,9 +56,48 @@ fi
 
 WORKDIR /app/ComfyUI
 
+# Download models from HuggingFace (optional, controlled by build arg)
+ARG DOWNLOAD_MODELS=true
+
+# Create model directories
+RUN mkdir -p /app/ComfyUI/models/clip \
+    /app/ComfyUI/models/loras \
+    /app/ComfyUI/models/diffusion_models \
+    /app/ComfyUI/models/vae \
+    /app/ComfyUI/models/checkpoints
+
+# Download models if DOWNLOAD_MODELS is true
+RUN if [ "$DOWNLOAD_MODELS" = "true" ]; then \
+    echo "Downloading InstructDesign models from HuggingFace..." && \
+    # CLIP-L (246 MB)
+    wget -q --show-progress --progress=bar:force \
+        https://huggingface.co/tercumantanumut/instructdesign-kontext/resolve/main/clip/clip_l.safetensors \
+        -O /app/ComfyUI/models/clip/clip_l.safetensors && \
+    # T5-XXL FP8 (5.16 GB)
+    wget -q --show-progress --progress=bar:force \
+        https://huggingface.co/tercumantanumut/instructdesign-kontext/resolve/main/clip/t5xxl_fp8_e4m3fn_scaled.safetensors \
+        -O /app/ComfyUI/models/clip/t5xxl_fp8_e4m3fn_scaled.safetensors && \
+    # LoRA v4 consolidated
+    wget -q --show-progress --progress=bar:force \
+        https://huggingface.co/tercumantanumut/instructdesign-kontext/resolve/main/loras/flux_kontext_lora_v4_consolidated_000010000.safetensors \
+        -O /app/ComfyUI/models/loras/flux_kontext_lora_v4_consolidated_000010000.safetensors && \
+    # FLUX.1 Kontext [dev] base model (to diffusion_models, not unet)
+    wget -q --show-progress --progress=bar:force \
+        https://huggingface.co/tercumantanumut/instructdesign-kontext/resolve/main/unet/flux1-kontext-dev.safetensors \
+        -O /app/ComfyUI/models/diffusion_models/flux1-kontext-dev.safetensors && \
+    # VAE
+    wget -q --show-progress --progress=bar:force \
+        https://huggingface.co/tercumantanumut/instructdesign-kontext/resolve/main/vae/ae.safetensors \
+        -O /app/ComfyUI/models/vae/ae.safetensors && \
+    echo "All models downloaded successfully!" \
+    ; else \
+    echo "Skipping model downloads (DOWNLOAD_MODELS=$DOWNLOAD_MODELS)" \
+    ; fi
+
 EXPOSE 8188
 
 CMD ["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"]
-# Shared models volume
+
+# Shared models volume (optional for external models)
 RUN mkdir -p /models && ln -s /models /app/ComfyUI/models_external || true
 VOLUME ["/models"]

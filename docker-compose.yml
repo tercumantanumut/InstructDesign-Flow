@@ -3,13 +3,19 @@ version: '3.8'
 services:
   # ComfyUI Backend Service with InstructDesign Flow
   comfyui:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+      args:
+        DOWNLOAD_MODELS: "true"  # Set to "false" if you already have models locally
     image: instructdesign-flow:latest
     container_name: comfyui-instructdesign
     ports:
       - "8188:8188"
     volumes:
-      # Mount models from host
-      - /home/ubuntu/webflow-demo/ComfyUI/models:/app/ComfyUI/models
+      # NOTE: Models are now included in the image during build
+      # If you want to use external models, uncomment the line below:
+      # - ./ComfyUI/models:/app/ComfyUI/models
       # Output directory - direct mount to host
       - ./output:/app/ComfyUI/output
       # Input directory for test images
