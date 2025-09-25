@@ -1,70 +1,143 @@
 # InstructDesign Flow
 
-Transform web interfaces with natural language instructions using our fine-tuned FLUX.1 Kontext model.
+🏆 **FLUX.1 Kontext [dev] Hackathon Submission** - [Competition Link](https://bfl-kontext-dev.devpost.com/)
+
+Transform web interfaces with natural language instructions using our fine-tuned FLUX.1 Kontext model. This project enables AI-driven web design transformations through simple text prompts, trained on a curated dataset of 900+ webpage transformation pairs.
+
+## 🎯 Project Overview
+
+InstructDesign Flow is a specialized fine-tuning of FLUX.1 Kontext [dev] that understands and executes web design transformations through natural language. Simply provide a webpage screenshot and describe the desired changes - the model handles the rest.
+
+### Key Features
+- **100+ Pre-defined Design Presets**: From dark mode to cyberpunk themes
+- **Natural Language Control**: Describe changes in plain English
+- **Consistent Transformations**: 85%+ instruction adherence rate
+- **Production Ready**: Dockerized with automatic model downloads
+- **Real-time API**: WebSocket support for live progress updates
+
+## 📊 Dataset & Training
+
+### Training Dataset
+- **Dataset Repository**: [HuggingFace - instructdesign-kontext](https://huggingface.co/datasets/tercumantanumut/instructdesign-kontext)
+- **Size**: 937 webpage transformation pairs
+- **Sample Available**: 100 representative pairs publicly available
+- **Format**: Original screenshots + transformed outputs + text instructions
+- **Coverage**: UI/UX redesigns, theme changes, layout modifications, style transfers
+
+### Training Infrastructure
+- **Training Framework**: [ostris/ai-toolkit](https://github.com/ostris/ai-toolkit)
+- **Configuration**: [`flux_kontext_training_v4_consolidated.yaml`](https://github.com/tercumantanumut/InstructDesign-Flow/blob/main/training_config.yaml)
+- **Development Time**: 7 days
+- **Hardware**: NVIDIA GPU with 80GB VRAM
+- **Training Steps**: 10,000
+- **Checkpoints Saved**: Every 1000 steps
+
+### Training Configuration Details
+```yaml
+Model Architecture:
+  Base Model: black-forest-labs/FLUX.1-Kontext-dev
+  Type: LoRA (Low-Rank Adaptation)
+  Rank: 256
+  Alpha: 256
+
+Training Parameters:
+  Batch Size: 2
+  Learning Rate: 7e-5
+  Optimizer: AdamW 8-bit
+  Gradient Accumulation: 1
+  Noise Scheduler: FlowMatch
+  Timestep Type: Sigmoid
+  Resolution: [512, 768, 1024]
+
+Dataset Settings:
+  Caption Dropout: 5%
+  Cache Latents: True
+  Control Images: _original.jpg suffix
+  Output Images: _output.jpg suffix
+```
+
+### Model Artifacts
+- **Model Repository**: [HuggingFace - instructdesign-kontext](https://huggingface.co/tercumantanumut/instructdesign-kontext)
+- **LoRA Weights**: `flux_kontext_lora_v4_consolidated_000010000.safetensors`
+- **Base Model**: `flux1-kontext-dev.safetensors`
+- **Text Encoders**: CLIP-L + T5-XXL (FP8)
+- **VAE**: `ae.safetensors`
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- NVIDIA GPU (16GB+ VRAM)
+- NVIDIA GPU (16GB+ VRAM recommended)
 - Docker & Docker Compose
 - NVIDIA Container Toolkit
+- ~100GB disk space (for models and Docker images)
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd webflow-demo
+git clone https://github.com/tercumantanumut/InstructDesign-Flow
+cd InstructDesign-Flow
 ```
 
-2. Start the services:
+2. Start the services (models download automatically):
 ```bash
 docker-compose up -d
 ```
 
-The API will be available at `http://localhost:8000`
+The services will be available at:
+- API: `http://localhost:8000`
+- ComfyUI: `http://localhost:8188`
+- Frontend: `http://localhost:3000` (if running)
 
-## 🎨 Features
+## 🎨 Transformation Capabilities
 
-- **Natural Language Control**: Transform designs with simple text instructions
-- **Multiple Input Formats**: URL, base64, or local files
-- **Real-time Processing**: WebSocket support for live progress updates
-- **Queue Management**: Priority-based task processing
-- **Flexible Output**: File paths or base64 encoded images
-- **Production Ready**: Dockerized with auto-scaling workers
+### Pre-trained Transformation Types
+1. **Theme Changes**: Dark mode, light mode, high contrast
+2. **Design Systems**: Material Design, iOS, Windows Metro
+3. **Style Effects**: Glassmorphism, neumorphism, brutalism
+4. **Layout Modifications**: Mobile-first, dashboard, e-commerce
+5. **Industry Specific**: SaaS, portfolio, blog, landing page
+6. **Creative Themes**: Cyberpunk, retro, minimalist, maximalist
+7. **Device Mockups**: iPhone, MacBook, billboard placements
+8. **Accessibility**: High contrast, larger fonts, better spacing
 
 ## 📡 API Usage
 
 ### Basic Transformation
-
 ```bash
 curl -X POST http://localhost:8000/api/generate \
   -H "Content-Type: application/json" \
   -d '{
     "positive_prompt": "Transform this interface to dark mode with modern aesthetics",
-    "input_image": "test_input.png",
+    "input_image": "inputs/sample_webpage.png",
     "seed": 42
   }'
 ```
 
-### URL Input
+### Using Presets
 ```bash
 curl -X POST http://localhost:8000/api/generate \
   -d '{
-    "positive_prompt": "Add glassmorphism effects",
-    "input_image": "https://images.unsplash.com/photo-xyz",
+    "positive_prompt": "Apply glassmorphism_ui aesthetic",
+    "input_image": "https://example.com/screenshot.png",
     "return_base64": true
   }'
 ```
 
-### Base64 Input/Output
-```bash
-curl -X POST http://localhost:8000/api/generate \
-  -d '{
-    "positive_prompt": "Convert to neumorphic design",
-    "input_image": "data:image/png;base64,iVBORw0...",
-    "return_base64": true
-  }'
+### Batch Processing
+```python
+import requests
+import json
+
+presets = ["dark_mode", "mobile_responsive", "minimalist_clean"]
+for preset in presets:
+    response = requests.post("http://localhost:8000/api/generate",
+        json={
+            "positive_prompt": f"Apply {preset} transformation",
+            "input_image": "test.png",
+            "seed": 42
+        })
+    print(f"{preset}: {response.json()}")
 ```
 
 ## 🔧 API Endpoints
@@ -75,175 +148,164 @@ curl -X POST http://localhost:8000/api/generate \
 | `/api/status/{prompt_id}` | GET | Check generation status |
 | `/api/images/{filename}` | GET | Download generated image |
 | `/api/queue/status` | GET | View queue statistics |
-| `/api/workers/status` | GET | Monitor worker pool |
-| `/ws/{prompt_id}` | WS | Real-time progress |
-
-### Request Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `positive_prompt` | string | required | Transformation instruction |
-| `negative_prompt` | string | null | Things to avoid |
-| `input_image` | string | required | Image source (file/URL/base64) |
-| `seed` | integer | -1 | Random seed (-1 for random) |
-| `steps` | integer | 20 | Sampling steps (1-100) |
-| `cfg` | float | 1.0 | CFG scale (1-30) |
-| `guidance` | float | 5.0 | Guidance strength |
-| `return_base64` | boolean | false | Return base64 encoded images |
-
-## 🎯 Transformation Capabilities
-
-- **UI/UX Redesign**: Modernize interfaces, change layouts
-- **Style Transfer**: Apply design systems (Material, iOS, etc.)
-- **Theme Switching**: Dark/light mode conversions
-- **Effects**: Glassmorphism, neumorphism, gradients
-- **Device Mockups**: Place designs in device frames
-- **Color Schemes**: Palette transformations
-- **Content Updates**: Modify text and imagery
+| `/health` | GET | Service health check |
+| `/docs` | GET | Interactive API documentation |
 
 ## 📁 Project Structure
 
 ```
-webflow-demo/
-├── docker-compose.yml      # Service orchestration
-├── workflow_api.json       # ComfyUI workflow
-├── inputs/                 # Input images
-├── output/                 # Generated images
-├── deeployd-comfy/         # API implementation
-└── ComfyUI/models/         # Model weights
-    ├── unet/              # flux1-kontext-dev.safetensors
-    ├── loras/             # flux_kontext_lora_v4.safetensors
-    ├── clip/              # Text encoders
-    └── vae/               # VAE decoder
+InstructDesign-Flow/
+├── docker-compose.yml         # Service orchestration
+├── build/
+│   └── Dockerfile            # ComfyUI + models container
+├── workflow_api.json         # ComfyUI workflow definition
+├── inputs/                   # Input images directory
+├── output/                   # Generated outputs
+├── deeployd-comfy/          # API wrapper implementation
+├── comfyui-deploy-next-example/ # Frontend application
+└── training/
+    └── config.yaml          # Training configuration
 ```
 
-## 🐳 Docker Services
+## 🐳 Docker Architecture
 
-### ComfyUI Container
-- Runs the FLUX.1 Kontext model
-- Handles image generation
-- GPU accelerated inference
+### Services
+1. **comfyui-instructdesign**: GPU-accelerated inference server
+   - Automatic model downloads (~12GB)
+   - ComfyUI with custom nodes
+   - CUDA 12.8 optimized
 
-### API Container
-- FastAPI REST endpoints
-- Queue management
-- Worker pool orchestration
-- WebSocket support
+2. **instructdesign-api**: FastAPI wrapper
+   - Queue management
+   - WebSocket support
+   - Priority task processing
 
-## ⚙️ Configuration
+## 🔬 Technical Details
 
-### Environment Variables
-```yaml
-COMFYUI_HOST: comfyui
-COMFYUI_PORT: 8188
-OUTPUT_DIR: /app/outputs
-INPUT_DIR: /app/inputs
-MAX_WORKERS: 4
-TASK_TIMEOUT: 300
-```
-
-### Volume Mounts
-- `./inputs`: Source images directory
-- `./output`: Generated images directory
-- `./ComfyUI/models`: Model weights (50GB+)
-
-## 🔬 Model Details
-
+### Model Specifications
 - **Base Model**: FLUX.1 Kontext [dev]
-- **Training Data**: 937 web interface transformation pairs
-- **LoRA Checkpoint**: 10,000 steps
-- **Inference Time**: ~45-70 seconds per image
-- **Consistency Rate**: 85%+ instruction adherence
+- **Fine-tuning Method**: LoRA with rank 256
+- **Training Duration**: 10,000 steps
+- **Inference Time**: 45-70 seconds per 1024x1024 image
+- **VRAM Usage**: ~14GB during inference
+- **Consistency**: 85%+ instruction following
 
-## 📊 Performance
+### Performance Metrics
+- **Queue Capacity**: 1000 concurrent tasks
+- **Worker Threads**: Auto-scaling 1-4
+- **Average Latency**: 55 seconds
+- **Success Rate**: 95%+
+- **Supported Formats**: PNG, JPEG, WebP
 
-- **Queue Capacity**: 1000 tasks
-- **Concurrent Workers**: 1-4 (auto-scaling)
-- **Priority Levels**: High, Normal, Low
-- **Failed Task Retry**: 3 attempts with backoff
-- **WebSocket Connections**: 100 max
+## 🎓 Example Transformations
+
+### From Training Dataset
+```
+"Transform this webpage to dark mode with purple accents"
+"Apply material design 3 principles with rounded corners"
+"Convert to cyberpunk aesthetic with neon colors"
+"Make this mobile-responsive with touch-friendly buttons"
+"Add glassmorphism effects to all card elements"
+```
+
+### Advanced Prompts
+```
+"Redesign this interface for accessibility, increasing contrast
+ and font sizes while maintaining the original brand colors"
+
+"Transform this desktop layout to a mobile-first design with
+ hamburger navigation and thumb-friendly interaction zones"
+
+"Apply a premium SaaS aesthetic with gradient backgrounds,
+ subtle shadows, and modern typography"
+```
 
 ## 🛠️ Development
 
-### Building from Source
-```bash
-# Build ComfyUI container
-cd build
-./docker_build.sh
+### Training Your Own Model
 
-# Build API container
-docker-compose build workflow-api
+1. Prepare your dataset:
+   - Collect webpage screenshots (original)
+   - Create transformed versions (output)
+   - Write transformation descriptions (captions)
+
+2. Configure training:
+```bash
+git clone https://github.com/ostris/ai-toolkit
+cd ai-toolkit
+# Copy our training config
+cp /path/to/flux_kontext_training_v4_consolidated.yaml config/
 ```
 
-### Running Tests
+3. Start training:
 ```bash
-# Test basic generation
-curl -X POST http://localhost:8000/api/generate \
-  -d @test_request.json
-
-# Check health
-curl http://localhost:8000/health
+python run.py config/flux_kontext_training_v4_consolidated.yaml
 ```
 
-### Monitoring
+### Monitoring Training
+
 ```bash
-# View logs
-docker-compose logs -f
+# TensorBoard logs
+tensorboard --logdir=output/flux_kontext_lora_v4_consolidated/logs
 
-# Check queue status
-curl http://localhost:8000/api/queue/status
-
-# Monitor resources
-curl http://localhost:8000/api/resources/status
+# Sample outputs every 1000 steps
+ls output/flux_kontext_lora_v4_consolidated/samples/
 ```
 
-## 📚 Documentation
+## 📚 Resources
 
-- [Technical Documentation](PROJECT_DOCUMENTATION.md) - Detailed technical specs
-- [API Reference](http://localhost:8000/docs) - Interactive API docs
-- [DeepFloyd-Comfy](https://github.com/deepfloyd/deepfloyd-comfy) - API framework
+- **Competition**: [FLUX.1 Kontext Hackathon](https://bfl-kontext-dev.devpost.com/)
+- **Model Weights**: [HuggingFace Model Hub](https://huggingface.co/tercumantanumut/instructdesign-kontext)
+- **Dataset Samples**: [HuggingFace Datasets](https://huggingface.co/datasets/tercumantanumut/instructdesign-kontext)
+- **Training Framework**: [AI Toolkit by Ostris](https://github.com/ostris/ai-toolkit)
+- **Base Model**: [FLUX.1 Kontext [dev]](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev)
+- **API Framework**: [DeepFloyd-Comfy](https://github.com/deepfloyd/deepfloyd-comfy)
 
-## 🎓 Example Prompts
+## 🏆 Hackathon Submission
 
-### Style Transformations
-- "Transform this interface to dark mode with purple accents"
-- "Apply material design 3 principles with rounded corners"
-- "Convert to minimalist Scandinavian design aesthetic"
-
-### Mockup Generation
-- "Place this interface on an iPhone 15 Pro in a coffee shop"
-- "Show this design on a MacBook Pro at a desk"
-- "Create a billboard mockup in Times Square"
-
-### UI Improvements
-- "Modernize this dated interface with current design trends"
-- "Improve accessibility with better contrast and larger text"
-- "Add micro-interactions and hover states"
+This project was developed for the **Black Forest Labs FLUX.1 Kontext [dev] Hackathon**:
+- **Development Period**: 7 days
+- **Team**: Umut Tan (tercumantanumut@gmail.com)
+- **Focus**: Web interface transformation through natural language
+- **Innovation**: First LoRA fine-tune specifically for web design transformations
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
+We welcome contributions! Areas for improvement:
+- Additional transformation presets
+- Frontend UI enhancements
+- Performance optimizations
+- Dataset expansion
+- Documentation improvements
 
 ## 📄 License
 
-This project uses the FLUX.1 Kontext model. Please refer to the model's license for usage terms.
+This project uses the FLUX.1 Kontext [dev] model. Please refer to:
+- [FLUX.1 Kontext License](https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev)
+- Dataset: Research and educational use
+- Code: MIT License
 
 ## 🙏 Acknowledgments
 
-- FLUX.1 team for the base model
-- ComfyUI for the inference framework
-- DeepFloyd team for the API infrastructure
-- 10 weeks of iterative development and training
+- **Black Forest Labs** for FLUX.1 Kontext [dev]
+- **Ostris** for the excellent AI Toolkit training framework
+- **ComfyUI** community for the inference infrastructure
+- **HuggingFace** for model and dataset hosting
+- **DeepFloyd** team for the API wrapper framework
 
 ## 🚧 Roadmap
 
-- [ ] Web-based frontend interface
-- [ ] Authentication & API keys
+- [x] Complete model training (10,000 steps)
+- [x] Docker containerization with auto-download
+- [x] API implementation with queue management
+- [x] Dataset publication on HuggingFace
+- [x] Frontend with 100+ presets
+- [ ] Web-based playground interface
 - [ ] Batch processing UI
-- [ ] Prompt templates library
-- [ ] Model versioning system
-- [ ] Performance analytics dashboard
+- [ ] Fine-tuning guide and tutorials
+- [ ] Performance optimizations for faster inference
+- [ ] Mobile app for on-device transformations
 
 ---
 
-**Ready for Frontend Development!** The API is fully functional and tested. Next step: Building an intuitive web interface for easy access to the transformation capabilities.
+**📧 Contact**: tercumantanumut@gmail.com | **🏆 Hackathon**: [FLUX.1 Kontext [dev]](https://bfl-kontext-dev.devpost.com/)

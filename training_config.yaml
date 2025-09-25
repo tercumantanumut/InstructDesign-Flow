@@ -1,0 +1,101 @@
+---
+job: extension
+config:
+  # this name will be the folder and filename name
+  name: "flux_kontext_lora_v4_consolidated"
+  process:
+    - type: 'sd_trainer'
+      # root folder to save training sessions/samples/weights
+      training_folder: "output"
+      # uncomment to see performance stats in the terminal every N steps
+      performance_log_every: 100
+      # enable tensorboard logging
+      log_dir: "output/flux_kontext_lora_v4_consolidated/logs"  # Add this for TensorBoard
+      logging:
+        log_every: 10  # log to tensorboard every 10 steps
+        use_tensorboard: true
+      device: cuda:0
+      # if a trigger word is specified, it will be added to captions of training data if it does not already exist
+      # alternatively, in your captions you can add [trigger] and it will be replaced with the trigger word
+#      trigger_word: "p3r5on"
+      network:
+        type: "lora"
+        linear: 256  # increased from 16 for better quality with 80GB
+        linear_alpha: 256
+      save:
+        dtype: float16 # precision to save
+        save_every: 1000 # save every 1000 steps as requested
+        max_step_saves_to_keep: 25 # keep more checkpoints for larger dataset
+        push_to_hub: false #change this to True to push your trained model to Hugging Face.
+        # You can either set up a HF_TOKEN env variable or you'll be prompted to log-in
+#       hf_repo_id: your-username/your-model-slug
+#       hf_private: true #whether the repo is private or public
+      datasets:
+        # datasets are a folder of images. captions need to be txt files with the same name as the image
+        # for instance image2.jpg and image2.txt. Only jpg, jpeg, and png are supported currently
+        # images will automatically be resized and bucketed into the resolution specified
+        - folder_path: "/home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated"
+          # control path is the input images for kontext for a paired dataset. These are the source images you want to change.
+          control_path: "/home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated"
+          control_suffix: "_original"  # this tells it to look for files ending in _original.jpg
+          caption_ext: "txt"
+          caption_dropout_rate: 0.05  # will drop out the caption 5% of time
+          shuffle_tokens: false  # shuffle caption order, split by commas
+          cache_latents_to_disk: true  # leave this true unless you know what you're doing
+          # With 80GB we can handle higher resolutions
+          resolution: [ 512, 768, 1024 ]  # multiple resolutions for better training
+      train:
+        batch_size: 2  # reduced back to 2 for stability
+        steps: 16200  # doubled from 8100 for extended training
+        gradient_accumulation_steps: 1
+        train_unet: true
+        train_text_encoder: false  # DISABLED - this causes compatibility issues with ComfyUI
+        gradient_checkpointing: true  # disabled since we have plenty of vram
+        noise_scheduler: "flowmatch" # for training only
+        optimizer: "adamw8bit"
+        lr: 7e-5  # reduced by 30% from 1e-4 for more consistent slower learning
+        timestep_type: "sigmoid" # sigmoid, linear, or weighted.
+        # uncomment this to skip the pre training sample
+#        skip_first_sample: true
+        # uncomment to completely disable sampling
+#        disable_sampling: true
+
+        # ema will smooth out learning, but could slow it down.
+        # ema_config:
+        #   use_ema: true
+        #   ema_decay: 0.99
+
+        # will probably need this if gpu supports it for flux, other dtypes may not work correctly
+        dtype: bf16
+      model:
+        # huggingface model name or path. This model is gated.
+        # visit https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev to accept the terms and conditions
+        # and then you can use this model.
+        name_or_path: "black-forest-labs/FLUX.1-Kontext-dev"
+        arch: "flux_kontext"
+        quantize: false  # disabled quantization since we have 80GB
+#        low_vram: true  # uncomment this if the GPU is connected to your monitors. It will use less vram to quantize, but is slower.
+      sample:
+        sampler: "flowmatch" # must match train.noise_scheduler
+        sample_every: 1000 # sample every 1000 steps to match save frequency
+        width: 1024
+        height: 1024
+        prompts:
+          # Diverse sample prompts from the consolidated dataset
+          - "Design the file upload interface that appears after the user confirms the media upload target, featuring a prominent drag-and-drop area for files, a clear Browse Files button, a visible label indicating the upload destination as Rakesh's first project, and a section to display upload progress and status. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_1_original.jpg"
+          - "Design a responsive product listing page displaying the 234 results in a grid layout, featuring individual product cards each containing an image, title, price, and a clear Add to Cart button. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_10_original.jpg"
+          - "Create Redesign the Chrome extension installation prompt as a modern, minimalistic modal dialog, featuring the Tango screenshots, training, & documentation extension name and its orange T logo prominently. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_50_original.jpg"
+          - "Create Redesign the sign-in interface to feature a centrally aligned, card-based layout with rounded corners and subtle shadow for depth. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_100_original.jpg"
+          - "Create a content editing page designed for a selected draft, featuring a rich text editor for detailed descriptions, distinct input fields for title, category, and tags. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_200_original.jpg"
+          - "Transform this webpage to holographic_ui aesthetic. Maintain the original layout while applying the tech_futuristic theme comprehensively. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_600_original.jpg"
+          - "Convert this webpage to lego_brick_build aesthetic. Maintain the original layout while applying the material_texture theme comprehensively. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_700_original.jpg"
+          - "Position this webpage in a premium device setting. Maintain webpage readability while creating visual impact. --ctrl_img /home/ubuntu/ai-toolkit/dataset/training_dataset_consolidated/pair_900_original.jpg"
+        neg: ""  # not used on flux
+        seed: 42
+        walk_seed: true
+        guidance_scale: 4
+        sample_steps: 20
+# you can add any additional meta info here. [name] is replaced with config name at top
+meta:
+  name: "[name]"
+  version: '1.0'
