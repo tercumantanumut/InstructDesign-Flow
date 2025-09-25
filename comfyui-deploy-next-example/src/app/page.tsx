@@ -255,7 +255,7 @@ export default function Page() {
                       <Label className="text-sm font-medium mb-2">Quick Presets</Label>
                       <div className="max-h-[200px] overflow-y-auto border border-gray-600 rounded-lg p-2 bg-gray-800">
                         {(() => {
-                          const categories = [...new Set(Object.values(TRANSFORMATION_PRESETS).map(p => p.category))];
+                          const categories = Array.from(new Set(Object.values(TRANSFORMATION_PRESETS).map(p => p.category)));
                           return categories.map(category => (
                             <div key={category} className="mb-1">
                               <button
@@ -371,10 +371,39 @@ export default function Page() {
                     ) : loading ? (
                       <ModernLoader status={status} progress={progress} />
                     ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-400">
+                      <div className="flex flex-col items-center justify-center h-full p-6">
+                        <p className="text-gray-400 mb-4">
                           Your transformed design will appear here
                         </p>
+
+                        {/* Prompting Guide - Inline in Output */}
+                        <div className="w-full max-w-md bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                          <h4 className="text-sm font-semibold text-yellow-400 mb-3">✨ Prompting Tips</h4>
+
+                          <div className="space-y-3 text-xs">
+                            <div>
+                              <p className="text-gray-300 font-medium mb-1">🎯 Reference Content:</p>
+                              <p className="text-gray-500">"CEO photos" • "navigation" • "hero section"</p>
+                            </div>
+
+                            <div>
+                              <p className="text-gray-300 font-medium mb-1">🎨 Use Style Keywords:</p>
+                              <div className="grid grid-cols-2 gap-1 text-gray-500">
+                                <span>• cyberpunk_2077</span>
+                                <span>• studio_ghibli</span>
+                                <span>• matrix_digital</span>
+                                <span>• lego_brick</span>
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="text-gray-300 font-medium mb-1">📝 Example:</p>
+                              <p className="text-gray-500 italic">
+                                "Transform to cyberpunk_2077 aesthetic with neon accents"
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

@@ -110,5 +110,20 @@ export async function getQueueStatus() {
 export async function getWebsocketUrl(promptId: string) {
     // Convert HTTP to WS protocol
     const wsBase = API_BASE.replace('http://', 'ws://').replace('https://', 'wss://');
-    return `${wsBase}/ws/${promptId}`;
+    return {
+        ws_connection_url: `${wsBase}/ws/${promptId}`
+    };
+}
+
+// Stub functions for demo components - create separate functions to avoid property redefinition
+export async function getWebsocketUrl2(promptId: string) {
+    return getWebsocketUrl(promptId);
+}
+
+export async function getWebsocketUrl3(promptId: string) {
+    return getWebsocketUrl(promptId);
+}
+
+export async function getWebsocketUrlAny(promptId: string) {
+    return getWebsocketUrl(promptId);
 }

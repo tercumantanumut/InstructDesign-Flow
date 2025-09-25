@@ -3,7 +3,7 @@ import { LoadingIcon } from "@/components/LoadingIcon";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { checkStatus } from "@/server/generate";
+import { checkGenerationStatus } from "@/server/generate";
 import { useEffect, useState } from "react";
 
 export function ImageGenerationResult({
@@ -20,7 +20,7 @@ export function ImageGenerationResult({
   useEffect(() => {
     if (!runId) return;
     const interval = setInterval(() => {
-      checkStatus(runId).then((res) => {
+      checkGenerationStatus(runId).then((res) => {
         if (res) {
           setStatus(res.status);
           setProgress(res.progress);

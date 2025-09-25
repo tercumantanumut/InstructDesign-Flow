@@ -1,6 +1,6 @@
 "use client"
 
-import { getWebsocketUrl2 } from '@/server/generate'
+import { getWebsocketUrl } from '@/server/generate'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from "use-debounce";
 import { Input } from './ui/input';
@@ -29,7 +29,7 @@ export function WebsocketDemo2() {
     const { status, sendInput, currentLog, sendImageInput, remainingQueue } = useComfyWebSocket({
         workflow_id: "1",
         enabled: false,
-        getWebsocketUrl: getWebsocketUrl2, onOutputReceived: ({
+        getWebsocketUrl: getWebsocketUrl, onOutputReceived: ({
             data
         }) => {
             const url = URL.createObjectURL(data);
@@ -177,9 +177,9 @@ function EditorEvent(props: {
     }, props.timeout);
 
     useEffect(() => {
-        editor.on('change-history', throttledOnChange);
+        editor.on('update' as any, throttledOnChange);
         return () => {
-            editor.off('change-history', throttledOnChange);
+            editor.off('update' as any, throttledOnChange);
         };
     }, [editor]); // Include props.timeout in the dependency array
 
