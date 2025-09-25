@@ -12,6 +12,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { generateTransformation, checkGenerationStatus } from "@/server/generate";
 import { TRANSFORMATION_PRESETS } from "@/lib/constants";
 import { ModernLoader } from "@/components/ModernLoader";
+import { galleryExamples } from "@/lib/galleryData";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,7 @@ export default function Page() {
   const [cfg, setCfg] = useState(1.0);
   const [guidance, setGuidance] = useState(5.0);
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState("playground");
 
   // Convert file to base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -53,6 +55,31 @@ export default function Page() {
       setCfg(preset.cfg);
       setGuidance(preset.guidance);
     }
+  };
+
+  // Load gallery example
+  const loadExample = async (example: any) => {
+    // Load the actual input image
+    const inputImagePath = example.inputType === "nvidia_corporate" ? "/inputs/input1.png" :
+                          example.inputType === "fal_ai_platform" ? "/inputs/Screenshot 2025-09-25 at 16.37.30.png" :
+                          example.inputType === "comfy_org_artistic" ? "/inputs/Screenshot 2025-09-25 at 16.37.49.png" :
+                          "/inputs/Screenshot 2025-09-25 at 16.38.03.png";
+
+    // Fetch and convert to base64
+    const response = await fetch(inputImagePath);
+    const blob = await response.blob();
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setInputImage(reader.result as string);
+    };
+    reader.readAsDataURL(blob);
+
+    setPrompt(example.prompt);
+    setSeed(example.seed);
+    setCfg(example.cfg);
+    setGuidance(example.guidance);
+    setActiveTab("playground");
+    setStatus("Example loaded! Ready to generate.");
   };
 
   // Toggle category collapse
@@ -193,7 +220,7 @@ export default function Page() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 max-w-7xl">
-        <Tabs defaultValue="playground" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="playground">Playground</TabsTrigger>
             <TabsTrigger value="gallery">Gallery</TabsTrigger>
@@ -383,7 +410,7 @@ export default function Page() {
                           <div className="space-y-3 text-xs">
                             <div>
                               <p className="text-gray-300 font-medium mb-1">🎯 Reference Content:</p>
-                              <p className="text-gray-500">"CEO photos" • "navigation" • "hero section"</p>
+                              <p className="text-gray-500">{`"CEO photos" • "navigation" • "hero section"`}</p>
                             </div>
 
                             <div>
@@ -399,7 +426,7 @@ export default function Page() {
                             <div>
                               <p className="text-gray-300 font-medium mb-1">📝 Example:</p>
                               <p className="text-gray-500 italic">
-                                "Transform to cyberpunk_2077 aesthetic with neon accents"
+                                {`"Transform to cyberpunk_2077 aesthetic with neon accents"`}
                               </p>
                             </div>
                           </div>
@@ -441,69 +468,29 @@ export default function Page() {
 
           {/* Gallery Tab */}
           <TabsContent value="gallery">
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Dark Mode</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Transform interfaces to modern dark mode
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setPrompt("Transform this interface to dark mode with modern aesthetics");
-                      setSeed(42);
-                    }}
-                  >
-                    Try This
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Glassmorphism</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Add frosted glass effects
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setPrompt("Add glassmorphism effects with frosted glass and transparency");
-                      setSeed(123);
-                    }}
-                  >
-                    Try This
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Mobile Optimized</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Optimize for mobile devices
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setPrompt("Optimize for mobile devices with touch-friendly interface");
-                      setSeed(456);
-                    }}
-                  >
-                    Try This
-                  </Button>
-                </CardContent>
-              </Card>
+            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {galleryExamples.map((example) => (
+                <Card key={example.id} className="overflow-hidden">
+                  <div className="relative h-48 bg-black">
+                    <img
+                      src={example.image}
+                      alt={example.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-sm mb-1">{example.title}</h3>
+                    <p className="text-xs text-gray-600 mb-3">{example.description}</p>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => loadExample(example)}
+                    >
+                      Use This Example
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
