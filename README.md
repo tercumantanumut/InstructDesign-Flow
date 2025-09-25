@@ -294,7 +294,7 @@ This project uses the FLUX.1 Kontext [dev] model. Please refer to:
 
 ### Core Technologies
 - **[Black Forest Labs](https://blackforestlabs.ai/)** for FLUX.1 Kontext [dev] model
-- **[Comfy.org](https://comfy.org/)** - Hackathon partner and ecosystem support
+- **[Comfy.org](https://comfy.org/)** - ecosystem support
 - **[Ostris](https://github.com/ostris)** for the excellent [AI Toolkit](https://github.com/ostris/ai-toolkit) training framework
 - **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)** community for the powerful inference infrastructure
 - **[ComfyDeploy](https://github.com/BennyKok/comfyui-deploy-next-example)** for the Next.js frontend example that served as the foundation for our UI
