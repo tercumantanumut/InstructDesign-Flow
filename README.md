@@ -266,7 +266,7 @@ ls output/flux_kontext_lora_v4_consolidated/samples/
 
 This project was developed for the **Black Forest Labs FLUX.1 Kontext [dev] Hackathon**:
 - **Development Period**: 7 days
-- **Team**: Umut Tan (tercumantanumut@gmail.com)
+- **Team**: Umut Tan 
 - **Focus**: Web interface transformation through natural language
 - **Innovation**: First LoRA fine-tune specifically for web design transformations
 
@@ -290,6 +290,7 @@ This project uses the FLUX.1 Kontext [dev] model. Please refer to:
 
 ### Core Technologies
 - **[Black Forest Labs](https://blackforestlabs.ai/)** for FLUX.1 Kontext [dev] model
+- **[Comfy.org](https://comfy.org/)** - Hackathon partner and ecosystem support
 - **[Ostris](https://github.com/ostris)** for the excellent [AI Toolkit](https://github.com/ostris/ai-toolkit) training framework
 - **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)** community for the powerful inference infrastructure
 - **[ComfyDeploy](https://github.com/BennyKok/comfyui-deploy-next-example)** for the Next.js frontend example that served as the foundation for our UI
@@ -297,7 +298,8 @@ This project uses the FLUX.1 Kontext [dev] model. Please refer to:
 ### Hackathon Sponsors
 - **[fal.ai](https://fal.ai/)** - Hackathon co-sponsor and compute infrastructure
 - **[Black Forest Labs](https://blackforestlabs.ai/)** - Model provider and hackathon host
-- **[Comfy.org](https://comfy.org/)** - Hackathon partner and ecosystem support
+- **[NVIDIA](https://nvidia.com/)** - Hackathon partner 
+
 
 ### Infrastructure & Tools
 - **[HuggingFace](https://huggingface.co/)** for model and dataset hosting
@@ -309,16 +311,13 @@ This project uses the FLUX.1 Kontext [dev] model. Please refer to:
 
 ## 🚧 Roadmap
 
-- [x] Complete model training (10,000 steps)
+- [x] Complete model training (16,000 steps)
 - [x] Docker containerization with auto-download
 - [x] API implementation with queue management
 - [x] Dataset publication on HuggingFace
 - [x] Frontend with 100+ presets
 - [ ] Web-based playground interface
-- [ ] Batch processing UI
 - [ ] Fine-tuning guide and tutorials
-- [ ] Performance optimizations for faster inference
-- [ ] Mobile app for on-device transformations
 
 ---
 
