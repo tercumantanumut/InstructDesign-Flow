@@ -9,11 +9,6 @@
 
 Transform web interfaces with natural language instructions using our fine-tuned FLUX.1 Kontext model. This project enables AI-driven web design transformations through simple text prompts, trained on a curated dataset of 900+ webpage transformation pairs.
 
-<div align="center">
-  <img src="images/instructdesign_workflow.png" alt="ComfyUI Workflow" width="800">
-  <p><i>ComfyUI workflow powering the InstructDesign transformations</i></p>
-</div>
-
 ## 🎯 Project Overview
 
 InstructDesign Flow is a specialized fine-tuning of FLUX.1 Kontext [dev] that understands and executes web design transformations through natural language. Simply provide a webpage screenshot and describe the desired changes - the model handles the rest.
