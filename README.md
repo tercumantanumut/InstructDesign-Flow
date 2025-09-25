@@ -28,8 +28,8 @@ InstructDesign Flow is a specialized fine-tuning of FLUX.1 Kontext [dev] that un
 - **Training Framework**: [ostris/ai-toolkit](https://github.com/ostris/ai-toolkit)
 - **Configuration**: [`flux_kontext_training_v4_consolidated.yaml`](https://github.com/tercumantanumut/InstructDesign-Flow/blob/main/training_config.yaml)
 - **Development Time**: 7 days
-- **Hardware**: NVIDIA GPU with 80GB VRAM
-- **Training Steps**: 10,000
+- **Hardware**: NVIDIA H100 GPU with 80GB VRAM
+- **Training Steps**: 16,000
 - **Checkpoints Saved**: Every 1000 steps
 
 ### Training Configuration Details
