@@ -1,0 +1,73 @@
+{
+  "endpoint": "/generate",
+  "method": "POST",
+  "parameters": [
+    {
+      "name": "prompt",
+      "type": "string",
+      "required": true,
+      "default": "",
+      "description": "Transformation instruction text"
+    },
+    {
+      "name": "input_image",
+      "type": "file",
+      "required": true,
+      "default": null,
+      "description": "Input web interface image to transform"
+    },
+    {
+      "name": "seed",
+      "type": "integer",
+      "required": false,
+      "default": -1,
+      "description": "Random seed (-1 for random)"
+    },
+    {
+      "name": "steps",
+      "type": "integer",
+      "required": false,
+      "default": 20,
+      "description": "Sampling steps",
+      "minimum": 1,
+      "maximum": 100
+    },
+    {
+      "name": "cfg",
+      "type": "number",
+      "required": false,
+      "default": 1.0,
+      "description": "CFG scale",
+      "minimum": 0.1,
+      "maximum": 10.0
+    },
+    {
+      "name": "guidance",
+      "type": "number",
+      "required": false,
+      "default": 5.0,
+      "description": "FluxGuidance strength",
+      "minimum": 0.0,
+      "maximum": 20.0
+    },
+    {
+      "name": "lora_strength",
+      "type": "number",
+      "required": false,
+      "default": 1.0,
+      "description": "LoRA model strength",
+      "minimum": 0.0,
+      "maximum": 2.0
+    },
+    {
+      "name": "batch_size",
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Number of images to generate",
+      "minimum": 1,
+      "maximum": 4
+    }
+  ],
+  "description": "Transform web interface with InstructDesign Flow"
+}
