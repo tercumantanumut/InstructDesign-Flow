@@ -170,3 +170,6 @@ bun.lockb
 .claude/
 
 # Keep directory structure with .gitkeep files
+
+# Files with sensitive tokens
+upload_to_hf.py
