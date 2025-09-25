@@ -1,8 +1,18 @@
 # InstructDesign Flow
 
-🏆 **FLUX.1 Kontext [dev] Hackathon Submission** - [Competition Link](https://bfl-kontext-dev.devpost.com/)
+🏆 **FLUX.1 Kontext [dev] Hackathon Submission** - [InstructDesign Flow on Devpost](https://devpost.com/software/instructdesign-flow)
+
+<div align="center">
+  <img src="images/transformation_cycle.png" alt="InstructDesign Transformation Cycle" width="600">
+  <p><i>Transform web interfaces iteratively with natural language instructions</i></p>
+</div>
 
 Transform web interfaces with natural language instructions using our fine-tuned FLUX.1 Kontext model. This project enables AI-driven web design transformations through simple text prompts, trained on a curated dataset of 900+ webpage transformation pairs.
+
+<div align="center">
+  <img src="images/instructdesign_workflow.png" alt="ComfyUI Workflow" width="800">
+  <p><i>ComfyUI workflow powering the InstructDesign transformations</i></p>
+</div>
 
 ## 🎯 Project Overview
 
